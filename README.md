@@ -28,6 +28,7 @@ The project is built using Laravel 8. The requirements are:
 - Run `php artisan serve` to start a development server at `http://localhost:8000:`
 - You will need to login using a test user created for the project `email: jdoe@mail.com` `password:qwerty`
 - After a successful login, you will be redirected to the projects page
+- The project can also be accessed [here](http://18.234.72.106/projects) using `email: jdoe@mail.com` `password:qwerty`
 
 
 ### API
