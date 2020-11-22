@@ -26,3 +26,10 @@ Route::group(['middleware' => ['auth:sanctum', 'verified']], function () {
     Route::post('projects/edit', 'App\Http\Controllers\ProjectController@update');
     Route::post('projects/delete/{id}', 'App\Http\Controllers\ProjectController@destroy');
 });
+
+Route::group(['prefix' => 'api'], function () {
+    Route::get('/', 'App\Http\Controllers\ProjectAPIController@index');
+    Route::get('projects/all', 'App\Http\Controllers\ProjectAPIController@index');
+    Route::get('projects/country/{country}', 'App\Http\Controllers\ProjectAPIController@countryProjects');
+    Route::get('projects/status/{status}', 'App\Http\Controllers\ProjectAPIController@projectStatus');
+});
