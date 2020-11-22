@@ -33,6 +33,6 @@ The project is built using Laravel 8. The requirements are:
 
 ### API
 Using a API testing tool such as [Postman](https://postman.com), you can access the endpoints below:
-- `127.0.0.1:8000/api/projects/country/Panama`
-- `127.0.0.1:8000/api/projects/all`
-- `127.0.0.1:8000/api/projects/status/completed`
+- `127.0.0.1:8000/api/projects/country/Panama` | `http://18.234.72.106/api/projects/country/Panama`
+- `127.0.0.1:8000/api/projects/all` | `http://18.234.72.106/api/projects/all`
+- `127.0.0.1:8000/api/projects/status/completed` | `http://18.234.72.106/api/projects/status/completed`
