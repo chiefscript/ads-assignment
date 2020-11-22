@@ -37,13 +37,13 @@
                     </td>
                     <td>{{ $project->office->name }}</td>
                     <td>{{ $project->title }}</td>
-                    <td>{{ number_format($project->grant_amount) }}</td>
+                    <td>{{ isset($project->grant_amount) ? number_format($project->grant_amount) : $project->grant_amount}}</td>
                     <td>{{ $project->gcf_date }}</td>
                     <td>{{ $project->start_date }}</td>
                     <td>{{ \Carbon\Carbon::parse($project->start_date)->diffInMonths($project->end_date) }}</td>
                     <td>{{ $project->end_date }}</td>
                     <td>{{ $project->read_nap }}</td>
-                    <td>{{ $project->readiness_type->name }}</td>
+                    <td>{{ isset($project->readiness_type) ? $project->readiness_type->name : ''}}</td>
                     <td>{{ isset($project->first_disbursement) ? number_format($project->first_disbursement) : ''}}</td>
                     <td>{{ $project->status->name }}</td>
                     <td>
@@ -52,7 +52,7 @@
                            data-ref="{{ $project->reference }}"
                            data-office="{{ $project->reference }}"
                            data-status="{{ $project->status->name }}"
-                           data-readiness_type="{{ $project->readiness_type->name }}"
+                           data-readiness_type="{{ isset($project->readiness_type) ? $project->readiness_type->name : '' }}"
                            data-months="{{ \Carbon\Carbon::parse($project->start_date)->diffInMonths($project->end_date) }}"
                         ><i class="fas fa-eye cyan-text pr-2"></i></a>
                         <a href="#" class="mr-1 ml-3 editProject" data-item="{{ $project->id }}"
@@ -103,6 +103,7 @@
                             <div class="form-row mb-5">
                                 <div class="col">
                                     <!-- Country -->
+                                    <label data-error="wrong" data-success="right" for="countrySelection">Country</label>
                                     <select id="countrySelection" multiple="multiple" name="country[]" required>
                                         @foreach($countries as $country)
                                             <option value="{{ $country->id }}">{{ $country->name }}</option>
@@ -112,6 +113,7 @@
                                 </div>
                                 <div class="col">
                                     <!-- Office -->
+                                    <label data-error="wrong" data-success="right" for="officeSelection">Office</label>
                                     <select id="officeSelection" name="office" required>
                                         @foreach($offices as $office)
                                             <option value="{{ $office->id }}">{{ $office->name }}</option>
@@ -123,7 +125,7 @@
 
                             <div class="form-row mb-5">
                                 <div class="col md-form">
-                                    <input type="number" name="grant" id="grant" class="form-control validate" required>
+                                    <input type="number" name="grant" id="grant" class="form-control validate">
                                     <label data-error="wrong" data-success="right" for="grant">Grant amount</label>
                                 </div>
                                 <div class="col md-form">
@@ -156,6 +158,8 @@
 
                             <div class="form-row mb-5">
                                 <div class="col">
+                                    <label data-error="wrong" data-success="right" for="rnapSelection">Readiness or
+                                        NAP</label>
                                     <select id="rnapSelection" name="r_nap" required>
                                         <option value="Readiness">Readiness</option>
                                         <option value="National Adaptation Plans">National Adaptation Plans</option>
@@ -163,6 +167,7 @@
                                     </select>
                                 </div>
                                 <div class="col">
+                                    <label data-error="wrong" data-success="right" for="statusSelection">Status</label>
                                     <select id="statusSelection" name="status" required>
                                         @foreach($statuses as $status)
                                             <option value="{{ $status->id }}">{{ $status->name }}</option>
@@ -174,7 +179,10 @@
 
                             <div class="form-row mb-5">
                                 <div class="col">
-                                    <select id="readinessTypeSelection" name="readiness_type" required>
+                                    <label data-error="wrong" data-success="right" for="readinessTypeSelection">Readiness
+                                        type</label>
+                                    <select id="readinessTypeSelection" name="readiness_type">
+                                        <option value=""></option>
                                         @foreach($readiness_types as $readiness_type)
                                             <option
                                                 value="{{ $readiness_type->id }}">{{ $readiness_type->name }}</option>
@@ -182,7 +190,6 @@
                                         @endforeach
                                     </select>
                                 </div>
-
                             </div>
 
                             <div class="text-center mb-3">
@@ -265,10 +272,12 @@
                     <form action="{{ url('/projects/edit') }}" method="POST">
                         {!! csrf_field() !!}
                         <div id="editBody"></div>
-                        <!--/.Content-->
+                    </form>
                 </div>
+                <!--/.Content-->
             </div>
-            <!-- Modal -->
+        </div>
+        <!-- Modal -->
 
     </section>
 
@@ -304,6 +313,7 @@
         $('#statusSelection').select2({
             placeholder: 'Select a status'
         });
+        $('#readinessTypeSelection').select2();
 
         $('a.viewProject').click(function () {
             var item = $(this).data('item');
@@ -325,19 +335,19 @@
                     $('span#reference').append(ref)
                     $("#viewProject").modal("show");
                     $.each(data, function (i, val) {
-                        $("#tbd").append('<tr><td>Reference</td><td class="reference">'+ data.reference +'</td></tr>' +
-                            '<tr><td>Title</td><td class="title">'+ data.title +'</td></tr>' +
-                            '<tr><td>Countries</td><td class="title">'+ countries +'</td></tr>' +
-                            '<tr><td>Implementing Office</td><td class="office">'+ office +'</td></tr>' +
-                            '<tr><td>Grant amount</td><td class="grant">'+ data.grant_amount +'</td></tr>' +
-                            '<tr><td>First disbursement</td><td class="grant">'+ data.first_disbursement +'</td></tr>' +
-                            '<tr><td>Date for GCF</td><td class="gcf">'+ data.gcf_date +'</td></tr>' +
-                            '<tr><td>Start date</td><td class="start">'+ data.start_date +'</td></tr>' +
-                            '<tr><td>End date</td><td class="end">'+ data.end_date +'</td></tr>' +
-                            '<tr><td>Status</td><td class="end">'+ status +'</td></tr>' +
-                            '<tr><td>Type of readiness</td><td class="end">'+ readiness_type +'</td></tr>' +
-                            '<tr><td>Readiness or NAP</td><td class="end">'+ data.read_nap +'</td></tr>' +
-                            '<tr><td>Duration in months</td><td class="months">'+ months +'</td>' +
+                        $("#tbd").append('<tr><td>Reference</td><td class="reference">' + data.reference + '</td></tr>' +
+                            '<tr><td>Title</td><td class="title">' + data.title + '</td></tr>' +
+                            '<tr><td>Countries</td><td class="title">' + countries + '</td></tr>' +
+                            '<tr><td>Implementing Office</td><td class="office">' + office + '</td></tr>' +
+                            '<tr><td>Grant amount</td><td class="grant">' + data.grant_amount + '</td></tr>' +
+                            '<tr><td>First disbursement</td><td class="grant">' + data.first_disbursement + '</td></tr>' +
+                            '<tr><td>Date for GCF</td><td class="gcf">' + data.gcf_date + '</td></tr>' +
+                            '<tr><td>Start date</td><td class="start">' + data.start_date + '</td></tr>' +
+                            '<tr><td>End date</td><td class="end">' + data.end_date + '</td></tr>' +
+                            '<tr><td>Status</td><td class="end">' + status + '</td></tr>' +
+                            '<tr><td>Type of readiness</td><td class="end">' + readiness_type + '</td></tr>' +
+                            '<tr><td>Readiness or NAP</td><td class="end">' + data.read_nap + '</td></tr>' +
+                            '<tr><td>Duration in months</td><td class="months">' + months + '</td>' +
                             '</tr>')
                         return i > 2;
                     })
@@ -396,7 +406,7 @@
                             '<option value="{{ $readiness_type->id }}">{{ $readiness_type->name }}</option>' +
                             '@endforeach</select></div></div><div class="text-center mb-3">' +
                             '<button type="submit" class="btn blue-gradient btn-block btn-rounded z-depth-1a">Submit</button></div>' +
-                            '</div></form></div>');
+                            '</div>');
                         $('select').select2();
                         return i > 2;
                     });
