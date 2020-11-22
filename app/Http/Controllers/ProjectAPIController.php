@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
-class ProjectController extends Controller
+class ProjectAPIController extends Controller
 {
     /**
      * Display a listing of the resource.
